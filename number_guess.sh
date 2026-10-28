@@ -22,10 +22,6 @@ else
   # Welcome back an existing user.
   IFS='|' read -r GAMES_PLAYED BEST_GAME <<< "$USER_INFO"
 
-  if [[ -z "$BEST_GAME" ]]; then
-    BEST_GAME="0"
-  fi
-
   echo "Welcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
 
@@ -54,11 +50,11 @@ done
 echo "You guessed it in $NUMBER_OF_GUESSES tries. The secret number was $SECRET_NUMBER. Nice job!"
 
 # Update the user's statistics.
-$PSQL "UPDATE users
+UPDATE_RESULT=$($PSQL "UPDATE users
 SET games_played = games_played + 1,
     best_game = CASE
       WHEN best_game IS NULL OR best_game > $NUMBER_OF_GUESSES
       THEN $NUMBER_OF_GUESSES
       ELSE best_game
     END
-WHERE username = '$USERNAME'"
+WHERE username = '$USERNAME'")
