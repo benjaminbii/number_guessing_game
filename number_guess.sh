@@ -4,13 +4,13 @@ PSQL="psql --username=freecodecamp --dbname=number_guess -t --no-align -c"
 
 echo "Enter your username:"
 read -r USERNAME
-
+SQL_USERNAME=${USERNAME//\'/\'\'}
 # Check whether the username exists.
-USER_INFO=$($PSQL "SELECT games_played, best_game FROM users WHERE username='$USERNAME'")
+USER_INFO=$($PSQL "SELECT games_played, best_game FROM users WHERE username='$SQL_USERNAME'")
 
 if [[ -z "$USER_INFO" ]]; then
   # Create a new user.
-  INSERT_USERNAME=$($PSQL "INSERT INTO users (username) VALUES ('$USERNAME')")
+  INSERT_USERNAME=$($PSQL "INSERT INTO users (username) VALUES ('$SQL_USERNAME')")
 
   if [[ "$INSERT_USERNAME" == "INSERT 0 1" ]]; then
     echo "Welcome, $USERNAME! It looks like this is your first time here."
@@ -57,4 +57,4 @@ SET games_played = games_played + 1,
       THEN $NUMBER_OF_GUESSES
       ELSE best_game
     END
-WHERE username = '$USERNAME'")
+WHERE username = '$SQL_USERNAME'")
